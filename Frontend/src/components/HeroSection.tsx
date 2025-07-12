@@ -27,29 +27,14 @@ const HeroSection = () => {
           skewAmount={6}
           easing="elastic"
         >
-          <Card customClass="bg-gradient-to-br from-blue-500/20 to-indigo-600/20 backdrop-blur-sm p-6">
-            <div className="text-center">
-              <h3 className="text-xl font-bold text-white mb-3">Sustainable Fashion</h3>
-              <p className="text-white/90 text-sm leading-relaxed">
-                Reduce waste by giving clothes new homes through our community exchange platform.
-              </p>
-            </div>
+          <Card>
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&h=600&fit=crop&q=90" alt="Modern streetwear" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
           </Card>
-          <Card customClass="bg-gradient-to-br from-indigo-500/20 to-purple-600/20 backdrop-blur-sm p-6">
-            <div className="text-center">
-              <h3 className="text-xl font-bold text-white mb-3">Community Driven</h3>
-              <p className="text-white/90 text-sm leading-relaxed">
-                Connect with neighbors who share your values and passion for sustainable living.
-              </p>
-            </div>
+          <Card>
+            <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&h=600&fit=crop&q=90" alt="Classic menswear" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
           </Card>
-          <Card customClass="bg-gradient-to-br from-purple-500/20 to-pink-600/20 backdrop-blur-sm p-6">
-            <div className="text-center">
-              <h3 className="text-xl font-bold text-white mb-3">Free & Safe Exchanges</h3>
-              <p className="text-white/90 text-sm leading-relaxed">
-                Safe meetup locations and verified community members make exchanges worry-free.
-              </p>
-            </div>
+          <Card>
+            <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=800&h=600&fit=crop&q=90" alt="Trendy women's fashion" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
           </Card>
         </LazyCardSwap>
       </div>
