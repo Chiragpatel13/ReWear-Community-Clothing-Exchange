@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
-import CardSwap, { Card } from './CardSwap';
-import Threads from './Threads';
+import LazyCardSwap, { Card } from './LazyCardSwap';
+import LazyThreads from './LazyThreads';
 
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen overflow-hidden bg-black">
       {/* Threads Background Effect */}
       <div className="absolute inset-0 z-0">
-        <Threads
+        <LazyThreads
           color={[0.2, 0.4, 0.8]}
           amplitude={1}
           distance={0}
@@ -17,7 +17,7 @@ const HeroSection = () => {
 
       {/* CardSwap Background Effect */}
       <div className="absolute inset-0 z-10">
-        <CardSwap
+        <LazyCardSwap
           width={450}
           height={350}
           cardDistance={60}
@@ -51,7 +51,7 @@ const HeroSection = () => {
               </p>
             </div>
           </Card>
-        </CardSwap>
+        </LazyCardSwap>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-20 flex items-center min-h-screen">
