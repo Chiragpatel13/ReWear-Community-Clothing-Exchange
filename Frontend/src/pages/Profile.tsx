@@ -1,270 +1,234 @@
-import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import Navbar from "@/components/Navbar";
-import { 
-  User, 
-  Mail, 
-  Edit3, 
-  Save, 
-  X,
-  Camera,
-  ArrowLeft
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { getUserProfile, UserProfile } from "../lib/users";
 import { Link } from "react-router-dom";
 
 const Profile = () => {
-  const { user } = useAuth();
-  const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    avatar: user?.avatar || ""
-  });
+  const { currentUser, logout } = useAuth();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (currentUser) {
+        try {
+          const profile = await getUserProfile(currentUser.uid);
+          setUserProfile(profile);
+        } catch (error) {
+          console.error('Error fetching user profile:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
 
-  const handleSave = async () => {
-    setIsLoading(true);
+    fetchUserProfile();
+  }, [currentUser]);
+
+  const handleLogout = async () => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log("Profile updated:", formData);
-      setIsEditing(false);
+      await logout();
     } catch (error) {
-      console.error("Failed to update profile:", error);
-    } finally {
-      setIsLoading(false);
+      console.error('Logout error:', error);
     }
   };
 
-  const handleCancel = () => {
-    setFormData({
-      name: user?.name || "",
-      email: user?.email || "",
-      avatar: user?.avatar || ""
-    });
-    setIsEditing(false);
-  };
-
-  if (!user) {
+  if (!currentUser) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
-        <Navbar />
-        <div className="flex items-center justify-center p-4 pt-8">
-          <Card className="w-full max-w-md text-center bg-gray-800 border-gray-700">
-            <CardContent className="p-8">
-              <h2 className="text-2xl font-bold text-white mb-2">Please Sign In</h2>
-              <p className="text-gray-300 mb-6">
-                You need to be signed in to view your profile.
-              </p>
-              <Link to="/login">
-                <Button className="w-full">
-                  Sign In
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-xl p-8 text-center max-w-md w-full">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h2>
+          <p className="text-gray-600 mb-6">You need to be logged in to view your profile.</p>
+          <Link to="/login" className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors">
+            Sign In
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-xl p-8 text-center max-w-md w-full">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading profile...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
-      <Navbar />
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <Link 
-            to="/" 
-            className="inline-flex items-center text-sm text-gray-400 hover:text-white transition-colors mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
-          </Link>
-          <h1 className="text-3xl font-bold text-white mb-2">Profile Settings</h1>
-          <p className="text-gray-300">
-            Manage your account information and preferences
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+      <div className="container mx-auto px-4 max-w-4xl">
+        {/* Back to Home */}
+        <Link 
+          to="/" 
+          className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors mb-6"
+        >
+          <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to Home
+        </Link>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Profile Card */}
-          <div className="lg:col-span-2">
-            <Card className="bg-gray-800 border-gray-700">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-white">Personal Information</CardTitle>
-                    <CardDescription className="text-gray-300">
-                      Update your profile details
-                    </CardDescription>
-                  </div>
-                  {!isEditing ? (
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setIsEditing(true)}
-                      className="border-gray-600 text-gray-300 hover:bg-gray-700"
-                    >
-                      <Edit3 className="h-4 w-4 mr-2" />
-                      Edit
-                    </Button>
-                  ) : (
-                    <div className="flex space-x-2">
-                      <Button 
-                        onClick={handleSave}
-                        disabled={isLoading}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        <Save className="h-4 w-4 mr-2" />
-                        {isLoading ? "Saving..." : "Save"}
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        onClick={handleCancel}
-                        className="border-gray-600 text-gray-300 hover:bg-gray-700"
-                      >
-                        <X className="h-4 w-4 mr-2" />
-                        Cancel
-                      </Button>
-                    </div>
-                  )}
+        <div className="bg-white rounded-lg shadow-xl overflow-hidden">
+          {/* Profile Header */}
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8">
+            <div className="flex items-center space-x-4">
+              <div className="w-20 h-20 bg-white text-blue-600 rounded-full flex items-center justify-center text-3xl font-bold">
+                {userProfile?.firstName?.charAt(0) || currentUser.displayName?.charAt(0) || currentUser.email?.charAt(0) || 'U'}
+              </div>
+              <div className="text-white">
+                <h1 className="text-3xl font-bold">
+                  {userProfile?.displayName || currentUser.displayName || 'User Profile'}
+                </h1>
+                <p className="text-blue-100 mt-1">
+                  {currentUser.email}
+                </p>
+                <div className="flex items-center mt-2">
+                  <div className={`w-3 h-3 rounded-full mr-2 ${currentUser.emailVerified ? 'bg-green-400' : 'bg-yellow-400'}`}></div>
+                  <span className="text-sm text-blue-100">
+                    {currentUser.emailVerified ? 'Email Verified' : 'Email Not Verified'}
+                  </span>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Avatar Section */}
-                <div className="flex items-center space-x-6">
-                  <div className="relative">
-                    <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center">
-                      {formData.avatar ? (
-                        <img 
-                          src={formData.avatar} 
-                          alt={formData.name} 
-                          className="w-20 h-20 rounded-full object-cover"
-                        />
-                      ) : (
-                        <User className="h-8 w-8 text-white" />
-                      )}
-                    </div>
-                    {isEditing && (
-                      <button className="absolute -bottom-1 -right-1 bg-blue-600 text-white rounded-full p-2 hover:bg-blue-700 transition-colors">
-                        <Camera className="h-3 w-3" />
-                      </button>
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-white">{formData.name}</h3>
-                    <p className="text-gray-400">{formData.email}</p>
-                    <Badge variant="secondary" className="mt-2 bg-gray-700 text-gray-300">
-                      Member since 2024
-                    </Badge>
-                  </div>
-                </div>
-
-                <Separator className="bg-gray-700" />
-
-                {/* Form Fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-gray-200">Full Name</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange("name", e.target.value)}
-                      disabled={!isEditing}
-                      className="bg-gray-900 text-white border-gray-700 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-gray-200">Email Address</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
-                      disabled={!isEditing}
-                      className="bg-gray-900 text-white border-gray-700 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50"
-                    />
-                  </div>
-                </div>
-
-                {isEditing && (
-                  <div className="space-y-2">
-                    <Label htmlFor="avatar" className="text-gray-200">Avatar URL (Optional)</Label>
-                    <Input
-                      id="avatar"
-                      placeholder="https://example.com/avatar.jpg"
-                      value={formData.avatar}
-                      onChange={(e) => handleInputChange("avatar", e.target.value)}
-                      className="bg-gray-900 text-white border-gray-700 focus:border-blue-500 focus:ring-blue-500"
-                    />
-                    <p className="text-xs text-gray-400">
-                      Enter a URL to your profile picture
-                    </p>
+                {userProfile?.points !== undefined && (
+                  <div className="flex items-center mt-2">
+                    <div className="w-3 h-3 rounded-full mr-2 bg-yellow-400"></div>
+                    <span className="text-sm text-blue-100">
+                      {userProfile.points} ReWear Points
+                    </span>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Account Stats */}
-            <Card className="bg-gray-800 border-gray-700">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">Account Stats</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-300">Items Listed</span>
-                  <Badge variant="secondary" className="bg-blue-600 text-white">12</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-300">Successful Swaps</span>
-                  <Badge variant="secondary" className="bg-green-600 text-white">8</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-300">Total Points</span>
-                  <Badge variant="secondary" className="bg-yellow-600 text-white">1,250</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-300">Member Since</span>
-                  <span className="text-gray-300">Jan 2024</span>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Profile Content */}
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Account Information */}
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">Account Information</h2>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                    <div className="p-3 bg-gray-50 rounded-md border">
+                      {userProfile?.firstName || 'Not set'}
+                    </div>
+                  </div>
 
-            {/* Quick Actions */}
-            <Card className="bg-gray-800 border-gray-700">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Link to="/list-item">
-                  <Button variant="outline" className="w-full border-gray-600 text-gray-300 hover:bg-gray-700">
-                    List New Item
-                  </Button>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                    <div className="p-3 bg-gray-50 rounded-md border">
+                      {userProfile?.lastName || 'Not set'}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
+                    <div className="p-3 bg-gray-50 rounded-md border">
+                      {userProfile?.displayName || currentUser.displayName || 'Not set'}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <div className="p-3 bg-gray-50 rounded-md border">
+                      {currentUser.email}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Member Since</label>
+                    <div className="p-3 bg-gray-50 rounded-md border">
+                      {userProfile?.createdAt ? 
+                        userProfile.createdAt.toDate().toLocaleDateString() : 
+                        (currentUser.metadata.creationTime ? 
+                          new Date(currentUser.metadata.creationTime).toLocaleDateString() : 
+                          'Unknown'
+                        )
+                      }
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">ReWear Points</label>
+                    <div className="p-3 bg-gray-50 rounded-md border">
+                      {userProfile?.points !== undefined ? userProfile.points : 'Loading...'}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Sign In</label>
+                    <div className="p-3 bg-gray-50 rounded-md border">
+                      {currentUser.metadata.lastSignInTime ? 
+                        new Date(currentUser.metadata.lastSignInTime).toLocaleDateString() : 
+                        'Unknown'
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Account Actions */}
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">Account Actions</h2>
+                
+                <div className="space-y-4">
+                  {!currentUser.emailVerified && (
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                      <div className="flex items-center">
+                        <svg className="w-5 h-5 text-yellow-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        <div>
+                          <h3 className="text-sm font-medium text-yellow-800">Email Verification Required</h3>
+                          <p className="text-sm text-yellow-700 mt-1">Please verify your email address to access all features.</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    <Link to="/edit-profile" className="w-full px-4 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors block text-center">
+                      Edit Profile
+                    </Link>
+                    
+                    <button className="w-full px-4 py-3 bg-gray-100 text-gray-700 font-medium rounded-md hover:bg-gray-200 transition-colors">
+                      Change Password
+                    </button>
+                    
+                    <button className="w-full px-4 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition-colors">
+                      Download My Data
+                    </button>
+                    
+                    <button 
+                      onClick={handleLogout}
+                      className="w-full px-4 py-3 bg-red-600 text-white font-medium rounded-md hover:bg-red-700 transition-colors"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Activity Section */}
+            <div className="mt-8 pt-6 border-t">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h2>
+              <div className="bg-gray-50 rounded-md p-6 text-center">
+                <svg className="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <h3 className="text-lg font-medium text-gray-900 mb-1">No Recent Activity</h3>
+                <p className="text-gray-600">Start using ReWear to see your activity here.</p>
+                <Link to="/browse" className="inline-block mt-4 px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors">
+                  Browse Items
                 </Link>
-                <Link to="/browse">
-                  <Button variant="outline" className="w-full border-gray-600 text-gray-300 hover:bg-gray-700">
-                    Browse Items
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -272,4 +236,4 @@ const Profile = () => {
   );
 };
 
-export default Profile; 
+export default Profile;
