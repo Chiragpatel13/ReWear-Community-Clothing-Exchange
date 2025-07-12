@@ -158,16 +158,16 @@ const ListItem = () => {
 
   if (submitSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
         <Navbar />
         <div className="flex items-center justify-center p-4 pt-8">
-          <Card className="w-full max-w-md text-center">
+          <Card className="w-full max-w-md text-center bg-gray-800 border-gray-700">
             <CardContent className="p-8">
               <div className="bg-green-100 rounded-full p-4 w-fit mx-auto mb-4">
                 <CheckCircle className="h-8 w-8 text-green-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Item Listed Successfully!</h2>
-              <p className="text-gray-600 mb-6">
+              <h2 className="text-2xl font-bold text-white mb-2">Item Listed Successfully!</h2>
+              <p className="text-gray-300 mb-6">
                 Your item has been added to the ReWear community. You'll earn points when someone exchanges with you!
               </p>
               <div className="space-y-3">
@@ -200,20 +200,20 @@ const ListItem = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <Link 
             to="/" 
-            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors mb-4"
+            className="inline-flex items-center text-sm text-gray-400 hover:text-white transition-colors mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">List Your Item</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-white mb-2">List Your Item</h1>
+          <p className="text-gray-300">
             Share clothes you no longer need and help them find a new home
           </p>
         </div>
@@ -221,10 +221,10 @@ const ListItem = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Form */}
           <div className="lg:col-span-2">
-            <Card>
+            <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle>Item Details</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-white">Item Details</CardTitle>
+                <CardDescription className="text-gray-300">
                   Provide detailed information about your clothing item
                 </CardDescription>
               </CardHeader>
@@ -232,27 +232,28 @@ const ListItem = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Title */}
                   <div className="space-y-2">
-                    <Label htmlFor="title">Item Title *</Label>
+                    <Label htmlFor="title" className="text-gray-200">Item Title *</Label>
                     <Input
                       id="title"
                       placeholder="e.g., Vintage Denim Jacket, Summer Dress"
                       value={formData.title}
                       onChange={(e) => handleInputChange("title", e.target.value)}
                       required
+                      className="bg-gray-900 text-white placeholder-gray-400 border-gray-700 focus:border-blue-500 focus:ring-blue-500"
                     />
                   </div>
 
                   {/* Category and Size */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="category">Category *</Label>
+                      <Label htmlFor="category" className="text-gray-200">Category *</Label>
                       <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
+                        <SelectTrigger className="bg-gray-900 text-white border-gray-700 focus:border-blue-500 focus:ring-blue-500">
+                          <SelectValue placeholder="Select category" className="text-gray-400" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-gray-900 text-white border-gray-700">
                           {categories.map((category) => (
-                            <SelectItem key={category} value={category}>
+                            <SelectItem key={category} value={category} className="text-white hover:bg-gray-800">
                               {category}
                             </SelectItem>
                           ))}
@@ -261,14 +262,14 @@ const ListItem = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="size">Size *</Label>
+                      <Label htmlFor="size" className="text-gray-200">Size *</Label>
                       <Select value={formData.size} onValueChange={(value) => handleInputChange("size", value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select size" />
+                        <SelectTrigger className="bg-gray-900 text-white border-gray-700 focus:border-blue-500 focus:ring-blue-500">
+                          <SelectValue placeholder="Select size" className="text-gray-400" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-gray-900 text-white border-gray-700">
                           {sizes.map((size) => (
-                            <SelectItem key={size} value={size}>
+                            <SelectItem key={size} value={size} className="text-white hover:bg-gray-800">
                               {size}
                             </SelectItem>
                           ))}
@@ -279,14 +280,14 @@ const ListItem = () => {
 
                   {/* Condition */}
                   <div className="space-y-2">
-                    <Label htmlFor="condition">Condition *</Label>
+                    <Label htmlFor="condition" className="text-gray-200">Condition *</Label>
                     <Select value={formData.condition} onValueChange={(value) => handleInputChange("condition", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select condition" />
+                      <SelectTrigger className="bg-gray-900 text-white border-gray-700 focus:border-blue-500 focus:ring-blue-500">
+                        <SelectValue placeholder="Select condition" className="text-gray-400" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-gray-900 text-white border-gray-700">
                         {conditions.map((condition) => (
-                          <SelectItem key={condition} value={condition}>
+                          <SelectItem key={condition} value={condition} className="text-white hover:bg-gray-800">
                             {condition}
                           </SelectItem>
                         ))}
@@ -296,7 +297,7 @@ const ListItem = () => {
 
                   {/* Description */}
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description *</Label>
+                    <Label htmlFor="description" className="text-gray-200">Description *</Label>
                     <Textarea
                       id="description"
                       placeholder="Describe your item in detail. Include brand, material, any flaws, and why you're letting it go..."
@@ -304,20 +305,21 @@ const ListItem = () => {
                       onChange={(e) => handleInputChange("description", e.target.value)}
                       rows={4}
                       required
+                      className="bg-gray-900 text-white placeholder-gray-400 border-gray-700 focus:border-blue-500 focus:ring-blue-500"
                     />
                   </div>
 
                   {/* Image Upload */}
                   <div className="space-y-2">
-                    <Label>Images *</Label>
+                    <Label className="text-gray-200">Images *</Label>
                     <div className="space-y-4">
                       {/* Upload Area */}
                       <div 
-                        className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer"
+                        className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer bg-gray-900"
                         onClick={() => fileInputRef.current?.click()}
                       >
-                        <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-600 mb-1">
+                        <Upload className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                        <p className="text-sm text-gray-300 mb-1">
                           Click to upload images or drag and drop
                         </p>
                         <p className="text-xs text-gray-500">
@@ -359,7 +361,7 @@ const ListItem = () => {
 
                   {/* Points Value */}
                   <div className="space-y-2">
-                    <Label htmlFor="pointsValue">Points Value *</Label>
+                    <Label htmlFor="pointsValue" className="text-gray-200">Points Value *</Label>
                     <div className="space-y-2">
                       <Input
                         id="pointsValue"
@@ -369,9 +371,10 @@ const ListItem = () => {
                         value={formData.pointsValue || ""}
                         onChange={(e) => handleInputChange("pointsValue", parseInt(e.target.value) || undefined)}
                         required
+                        className="bg-gray-900 text-white placeholder-gray-400 border-gray-700 focus:border-blue-500 focus:ring-blue-500"
                       />
                       {formData.condition && (
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-300">
                           Suggested: {calculateSuggestedPoints()} points based on condition
                         </p>
                       )}
@@ -396,9 +399,9 @@ const ListItem = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Tips Card */}
-            <Card>
+            <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-lg">Tips for Better Listings</CardTitle>
+                <CardTitle className="text-lg text-white">Tips for Better Listings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-start gap-3">
@@ -406,8 +409,8 @@ const ListItem = () => {
                     <ImageIcon className="h-4 w-4 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Good Photos</p>
-                    <p className="text-xs text-gray-600">Take clear, well-lit photos from multiple angles</p>
+                    <p className="text-sm font-medium text-white">Good Photos</p>
+                    <p className="text-xs text-gray-300">Take clear, well-lit photos from multiple angles</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -415,8 +418,8 @@ const ListItem = () => {
                     <CheckCircle className="h-4 w-4 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Honest Condition</p>
-                    <p className="text-xs text-gray-600">Be accurate about wear and any flaws</p>
+                    <p className="text-sm font-medium text-white">Honest Condition</p>
+                    <p className="text-xs text-gray-300">Be accurate about wear and any flaws</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -424,29 +427,29 @@ const ListItem = () => {
                     <AlertCircle className="h-4 w-4 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Fair Pricing</p>
-                    <p className="text-xs text-gray-600">Consider condition and original value</p>
+                    <p className="text-sm font-medium text-white">Fair Pricing</p>
+                    <p className="text-xs text-gray-300">Consider condition and original value</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Points Info */}
-            <Card>
+            <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-lg">How Points Work</CardTitle>
+                <CardTitle className="text-lg text-white">How Points Work</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">You earn points when someone exchanges with you</span>
-                  <Badge variant="outline">+{formData.pointsValue || "?"}</Badge>
+                  <span className="text-sm text-gray-300">You earn points when someone exchanges with you</span>
+                  <span className="inline-block px-2 py-1 rounded bg-gray-700 text-white text-xs font-semibold">+{formData.pointsValue || "?"}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">You spend points to exchange with others</span>
-                  <Badge variant="secondary">-{formData.pointsValue || "?"}</Badge>
+                  <span className="text-sm text-gray-300">You spend points to exchange with others</span>
+                  <span className="inline-block px-2 py-1 rounded bg-gray-700 text-white text-xs font-semibold">-{formData.pointsValue || "?"}</span>
                 </div>
                 <Separator />
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-400">
                   Points help maintain a fair exchange system. Higher quality items typically have higher point values.
                 </p>
               </CardContent>
