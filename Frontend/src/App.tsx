@@ -16,6 +16,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Browse = lazy(() => import("./pages/Browse"));
 const ItemDetail = lazy(() => import("./pages/ItemDetail"));
 const Profile = lazy(() => import("./pages/Profile"));
+const About = lazy(() => import("./pages/About"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,6 +54,7 @@ const App = () => (
               <Route path="/browse" element={<Browse />} />
               <Route path="/item/:id" element={<ItemDetail />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/about" element={<About />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
