@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Navbar from "@/components/Navbar";
+import { useAuth } from "@/contexts/AuthContext";
+import { createProduct, ProductFormData } from "@/lib/products";
 import { 
   Upload, 
   X, 
@@ -29,6 +31,8 @@ interface FormData {
 }
 
 const ListItem = () => {
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
@@ -42,7 +46,23 @@ const ListItem = () => {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Redirect to login if user is not authenticated
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-4">
+        <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-8 text-center max-w-md w-full">
+          <h2 className="text-2xl font-bold text-white mb-4">Authentication Required</h2>
+          <p className="text-gray-300 mb-6">You need to be logged in to list items.</p>
+          <Link to="/login" className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors">
+            Sign In
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const categories = [
     "Tops",
@@ -126,14 +146,47 @@ const ListItem = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!currentUser) {
+      setSubmitError('You must be logged in to list an item');
+      return;
+    }
+
+    console.log('Form submission started');
     setIsSubmitting(true);
+    setSubmitError(null);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      // Validate form data
+      if (!formData.title || !formData.category || !formData.size || !formData.condition || !formData.description || !formData.pointsValue) {
+        throw new Error('Please fill in all required fields');
+      }
 
-    console.log("Form submitted:", formData);
-    setSubmitSuccess(true);
-    setIsSubmitting(false);
+      if (formData.images.length === 0) {
+        throw new Error('Please upload at least one image');
+      }
+
+      const productData: ProductFormData = {
+        title: formData.title,
+        description: formData.description,
+        size: formData.size,
+        condition: formData.condition,
+        category: formData.category,
+        pointsValue: formData.pointsValue,
+        images: formData.images,
+      };
+
+      console.log('Creating product with data:', productData);
+      const productId = await createProduct(productData, currentUser.uid, currentUser.email || '');
+      console.log('Product created successfully with ID:', productId);
+      
+      setSubmitSuccess(true);
+    } catch (error) {
+      console.error('Error submitting product:', error);
+      setSubmitError(error instanceof Error ? error.message : 'Failed to list item. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const calculateSuggestedPoints = () => {
@@ -178,6 +231,7 @@ const ListItem = () => {
                 </Link>
                 <Button variant="outline" className="w-full" onClick={() => {
                   setSubmitSuccess(false);
+                  setSubmitError(null);
                   setFormData({
                     title: "",
                     description: "",
@@ -230,6 +284,13 @@ const ListItem = () => {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Error Display */}
+                  {submitError && (
+                    <div className="bg-red-900/50 border border-red-600 rounded-lg p-3 flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4 text-red-400" />
+                      <p className="text-red-200 text-sm">{submitError}</p>
+                    </div>
+                  )}
                   {/* Title */}
                   <div className="space-y-2">
                     <Label htmlFor="title" className="text-gray-200">Item Title *</Label>
