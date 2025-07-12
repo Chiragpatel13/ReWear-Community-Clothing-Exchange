@@ -43,9 +43,7 @@ const Signup = () => {
 
         <div className="bg-white border-0 shadow-xl rounded-lg">
           <div className="p-6 space-y-1 text-center">
-            <div className="mx-auto bg-blue-600 text-white rounded-xl p-3 w-fit mb-4">
-              <span className="font-bold text-2xl">R</span>
-            </div>
+            
             <h2 className="text-2xl font-bold text-gray-900">Join ReWear</h2>
             <p className="text-gray-600">
               Create your account and start exchanging clothes today

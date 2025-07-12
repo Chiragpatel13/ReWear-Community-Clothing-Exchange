@@ -37,9 +37,7 @@ const Login = () => {
 
         <div className="bg-white border-0 shadow-xl rounded-lg">
           <div className="p-6 space-y-1 text-center">
-            <div className="mx-auto bg-blue-600 text-white rounded-xl p-3 w-fit mb-4">
-              <span className="font-bold text-2xl">R</span>
-            </div>
+            
             <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
             <p className="text-gray-600">
               Sign in to your ReWear account to continue exchanging
@@ -162,16 +160,7 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="text-center text-xs text-gray-500">
-          By signing in, you agree to our{" "}
-          <Link to="/terms" className="hover:underline">
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link to="/privacy" className="hover:underline">
-            Privacy Policy
-          </Link>
-        </div>
+        
       </div>
     </div>
   );
