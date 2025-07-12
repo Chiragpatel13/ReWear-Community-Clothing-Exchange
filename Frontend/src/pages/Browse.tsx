@@ -4,6 +4,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import React from "react";
+import { Link } from "react-router-dom";
 
 const mockItems = [
   {
@@ -51,17 +62,65 @@ const mockItems = [
     points: 30,
     category: "Accessories"
   },
+  // Add more items for pagination demo
+  {
+    id: 6,
+    image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400&h=400&fit=crop",
+    title: "Classic Blue Jeans",
+    size: "L",
+    condition: "Good",
+    points: 90,
+    category: "Bottoms"
+  },
+  {
+    id: 7,
+    image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&h=400&fit=crop",
+    title: "Raincoat",
+    size: "M",
+    condition: "Excellent",
+    points: 110,
+    category: "Outerwear"
+  },
+  {
+    id: 8,
+    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop",
+    title: "Party Dress",
+    size: "S",
+    condition: "New",
+    points: 160,
+    category: "Dresses"
+  },
+  {
+    id: 9,
+    image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=400&fit=crop",
+    title: "Sneakers",
+    size: "9",
+    condition: "Like new",
+    points: 70,
+    category: "Footwear"
+  },
+  {
+    id: 10,
+    image: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?w=400&h=400&fit=crop",
+    title: "Hoodie",
+    size: "XL",
+    condition: "Excellent",
+    points: 100,
+    category: "Tops"
+  },
 ];
 
 const categories = ["All", "Tops", "Bottoms", "Dresses", "Outerwear", "Footwear", "Accessories"];
-const sizes = ["All", "XS", "S", "M", "L", "XL", "XXL", "One Size", "6", "8", "10", "12"];
+const sizes = ["All", "XS", "S", "M", "L", "XL", "XXL", "One Size", "6", "8", "9", "10", "12"];
 const conditions = ["All", "New", "Like new", "Excellent", "Good", "Fair"];
+const ITEMS_PER_PAGE = 8;
 
 const Browse = () => {
   const [category, setCategory] = useState("All");
   const [size, setSize] = useState("All");
   const [condition, setCondition] = useState("All");
   const [pointsRange, setPointsRange] = useState([0, 200]);
+  const [page, setPage] = useState(1);
 
   // Filter logic
   const filteredItems = mockItems.filter(item => {
@@ -71,6 +130,21 @@ const Browse = () => {
     const inPoints = item.points >= pointsRange[0] && item.points <= pointsRange[1];
     return inCategory && inSize && inCondition && inPoints;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+  const paginatedItems = filteredItems.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
+  // Handle page change
+  const goToPage = (p: number) => {
+    if (p < 1 || p > totalPages) return;
+    setPage(p);
+  };
+
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setPage(1);
+  }, [category, size, condition, pointsRange]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
@@ -133,26 +207,68 @@ const Browse = () => {
 
         {/* Items Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredItems.length === 0 ? (
+          {paginatedItems.length === 0 ? (
             <div className="col-span-full text-center text-gray-400 py-12">No items found for selected filters.</div>
           ) : (
-            filteredItems.map(item => (
-              <Card key={item.id} className="bg-gray-800 border-gray-700 flex flex-col h-full">
-                <img src={item.image} alt={item.title} className="w-full h-48 object-cover rounded-t-lg" />
-                <CardContent className="flex-1 flex flex-col p-4">
-                  <CardTitle className="text-white text-lg mb-1">{item.title}</CardTitle>
-                  <CardDescription className="text-gray-400 mb-2">{item.category}</CardDescription>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    <span className="inline-block px-2 py-1 rounded bg-gray-700 text-gray-200 text-xs">Size: {item.size}</span>
-                    <span className="inline-block px-2 py-1 rounded bg-gray-700 text-gray-200 text-xs">{item.condition}</span>
-                    <span className="inline-block px-2 py-1 rounded bg-blue-700 text-white text-xs font-semibold">{item.points} pts</span>
-                  </div>
-                  <Button className="mt-auto w-full bg-blue-600 hover:bg-blue-700 text-white">Request Swap</Button>
-                </CardContent>
-              </Card>
+            paginatedItems.map(item => (
+              <Link to={`/item/${item.id}`} key={item.id} className="hover:scale-[1.02] transition-transform">
+                <Card className="bg-gray-800 border-gray-700 flex flex-col h-full cursor-pointer">
+                  <img src={item.image} alt={item.title} className="w-full h-48 object-cover rounded-t-lg" />
+                  <CardContent className="flex-1 flex flex-col p-4">
+                    <CardTitle className="text-white text-lg mb-1">{item.title}</CardTitle>
+                    <CardDescription className="text-gray-400 mb-2">{item.category}</CardDescription>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      <span className="inline-block px-2 py-1 rounded bg-gray-700 text-gray-200 text-xs">Size: {item.size}</span>
+                      <span className="inline-block px-2 py-1 rounded bg-gray-700 text-gray-200 text-xs">{item.condition}</span>
+                      <span className="inline-block px-2 py-1 rounded bg-blue-700 text-white text-xs font-semibold">{item.points} pts</span>
+                    </div>
+                    <Button className="mt-auto w-full bg-blue-600 hover:bg-blue-700 text-white">Request Swap</Button>
+                  </CardContent>
+                </Card>
+              </Link>
             ))
           )}
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="mt-8 flex justify-center">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    href="#" 
+                    onClick={e => { e.preventDefault(); goToPage(page - 1); }} 
+                    className={`bg-white text-gray-900 border border-gray-300 hover:bg-gray-200 ${page === 1 ? 'pointer-events-none opacity-50' : ''}`}
+                  />
+                </PaginationItem>
+                {Array.from({ length: totalPages }).map((_, idx) => (
+                  <PaginationItem key={idx}>
+                    <PaginationLink
+                      href="#"
+                      isActive={page === idx + 1}
+                      onClick={e => { e.preventDefault(); goToPage(idx + 1); }}
+                      className={
+                        page === idx + 1
+                          ? 'bg-white text-gray-900 border border-blue-500 font-bold'
+                          : 'bg-white text-gray-900 border border-gray-300 hover:bg-gray-200'
+                      }
+                    >
+                      {idx + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext 
+                    href="#" 
+                    onClick={e => { e.preventDefault(); goToPage(page + 1); }} 
+                    className={`bg-white text-gray-900 border border-gray-300 hover:bg-gray-200 ${page === totalPages ? 'pointer-events-none opacity-50' : ''}`}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
       </div>
     </div>
   );
