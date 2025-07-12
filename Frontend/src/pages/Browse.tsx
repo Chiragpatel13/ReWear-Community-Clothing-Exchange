@@ -7,7 +7,6 @@ import { Slider } from "@/components/ui/slider";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/pagination";
 import React from "react";
 import { Link } from "react-router-dom";
+import { Search } from "lucide-react";
 
 const mockItems = [
   {
@@ -121,6 +121,7 @@ const Browse = () => {
   const [condition, setCondition] = useState("All");
   const [pointsRange, setPointsRange] = useState([0, 200]);
   const [page, setPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Filter logic
   const filteredItems = mockItems.filter(item => {
@@ -128,7 +129,8 @@ const Browse = () => {
     const inSize = size === "All" || item.size === size;
     const inCondition = condition === "All" || item.condition === condition;
     const inPoints = item.points >= pointsRange[0] && item.points <= pointsRange[1];
-    return inCategory && inSize && inCondition && inPoints;
+    const inSearch = item.title.toLowerCase().includes(searchTerm.trim().toLowerCase());
+    return inCategory && inSize && inCondition && inPoints && inSearch;
   });
 
   // Pagination logic
@@ -141,55 +143,61 @@ const Browse = () => {
     setPage(p);
   };
 
-  // Reset to page 1 when filters change
+  // Reset to page 1 when filters/search change
   React.useEffect(() => {
     setPage(1);
-  }, [category, size, condition, pointsRange]);
+  }, [category, size, condition, pointsRange, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black">
+    <div className="min-h-screen bg-black bg-gradient-to-br from-black via-gray-900 to-black">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
+        {/* Heading */}
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-extrabold text-white mb-2 tracking-tight drop-shadow-lg">Browse Items</h1>
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">Discover unique fashion pieces from the community. Use filters to find your perfect swap!</p>
+        </div>
+
         {/* Filters */}
-        <div className="mb-8 bg-gray-800 border border-gray-700 rounded-lg p-4 flex flex-wrap gap-4 items-center">
-          <div className="w-40">
+        <div className="mb-10 rounded-2xl border border-gray-800 bg-black/60 backdrop-blur-md shadow-lg p-6 flex flex-wrap gap-4 items-center justify-center">
+          <div className="w-44">
             <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="bg-gray-900 text-white border-gray-700">
+              <SelectTrigger className="bg-black/80 text-white border-gray-700 focus:ring-2 focus:ring-blue-600">
                 <SelectValue placeholder="Category" className="text-gray-400" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-900 text-white border-gray-700">
+              <SelectContent className="bg-black text-white border-gray-700">
                 {categories.map(cat => (
                   <SelectItem key={cat} value={cat} className="text-white hover:bg-gray-800">{cat}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          <div className="w-32">
+          <div className="w-36">
             <Select value={size} onValueChange={setSize}>
-              <SelectTrigger className="bg-gray-900 text-white border-gray-700">
+              <SelectTrigger className="bg-black/80 text-white border-gray-700 focus:ring-2 focus:ring-blue-600">
                 <SelectValue placeholder="Size" className="text-gray-400" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-900 text-white border-gray-700">
+              <SelectContent className="bg-black text-white border-gray-700">
                 {sizes.map(sz => (
                   <SelectItem key={sz} value={sz} className="text-white hover:bg-gray-800">{sz}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          <div className="w-40">
+          <div className="w-44">
             <Select value={condition} onValueChange={setCondition}>
-              <SelectTrigger className="bg-gray-900 text-white border-gray-700">
+              <SelectTrigger className="bg-black/80 text-white border-gray-700 focus:ring-2 focus:ring-blue-600">
                 <SelectValue placeholder="Condition" className="text-gray-400" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-900 text-white border-gray-700">
+              <SelectContent className="bg-black text-white border-gray-700">
                 {conditions.map(cond => (
                   <SelectItem key={cond} value={cond} className="text-white hover:bg-gray-800">{cond}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          <div className="flex flex-col gap-1 w-56">
-            <label className="text-gray-300 text-xs">Points Range</label>
+          <div className="flex flex-col gap-1 w-60">
+            <label className="text-gray-300 text-xs font-medium mb-1">Points Range</label>
             <Slider
               min={0}
               max={200}
@@ -203,27 +211,50 @@ const Browse = () => {
               <span>{pointsRange[1]}</span>
             </div>
           </div>
+          <div className="w-44">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search by title..."
+                className="w-full rounded-lg bg-black/80 border border-gray-700 text-white placeholder-gray-500 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+              />
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 h-5 w-5" />
+            </div>
+          </div>
         </div>
 
+        {/* Divider */}
+        <div className="h-2 mb-10 bg-gradient-to-r from-transparent via-gray-800 to-transparent rounded-full shadow-inner" />
+
         {/* Items Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {paginatedItems.length === 0 ? (
             <div className="col-span-full text-center text-gray-400 py-12">No items found for selected filters.</div>
           ) : (
             paginatedItems.map(item => (
-              <Link to={`/item/${item.id}`} key={item.id} className="hover:scale-[1.02] transition-transform">
-                <Card className="bg-gray-800 border-gray-700 flex flex-col h-full cursor-pointer">
-                  <img src={item.image} alt={item.title} className="w-full h-48 object-cover rounded-t-lg" />
-                  <CardContent className="flex-1 flex flex-col p-4">
-                    <CardTitle className="text-white text-lg mb-1">{item.title}</CardTitle>
-                    <CardDescription className="text-gray-400 mb-2">{item.category}</CardDescription>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      <span className="inline-block px-2 py-1 rounded bg-gray-700 text-gray-200 text-xs">Size: {item.size}</span>
-                      <span className="inline-block px-2 py-1 rounded bg-gray-700 text-gray-200 text-xs">{item.condition}</span>
-                      <span className="inline-block px-2 py-1 rounded bg-blue-700 text-white text-xs font-semibold">{item.points} pts</span>
+              <Link to={`/item/${item.id}`} key={item.id} className="hover:scale-[1.04] transition-transform">
+                <Card className="bg-gradient-to-br from-gray-900/90 to-black/80 border border-gray-800 rounded-2xl shadow-xl flex flex-col h-full cursor-pointer group overflow-hidden relative">
+                  <div className="relative">
+                    <img src={item.image} alt={item.title} className="w-full h-56 object-cover rounded-t-2xl group-hover:brightness-110 group-hover:scale-105 transition-all duration-300" />
+                    <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-3 py-1 rounded-full shadow-lg font-semibold tracking-wide">
+                      {item.points} pts
                     </div>
-                    <Button className="mt-auto w-full bg-blue-600 hover:bg-blue-700 text-white">Request Swap</Button>
+                  </div>
+                  <CardContent className="flex-1 flex flex-col p-5">
+                    <CardTitle className="text-white text-xl mb-1 font-bold group-hover:text-blue-400 transition-colors">{item.title}</CardTitle>
+                    <CardDescription className="text-gray-400 mb-3">{item.category}</CardDescription>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      <span className="inline-block px-2 py-1 rounded bg-gray-800/80 text-gray-200 text-xs">Size: {item.size}</span>
+                      <span className="inline-block px-2 py-1 rounded bg-gray-800/80 text-gray-200 text-xs">{item.condition}</span>
+                    </div>
+                    <Button className="mt-auto w-full bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-600 hover:to-blue-400 text-white font-semibold py-2 rounded-lg shadow-lg flex items-center justify-center gap-2 group-hover:scale-105 transition-transform">
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                      Request Swap
+                    </Button>
                   </CardContent>
+                  <div className="absolute inset-0 pointer-events-none group-hover:ring-2 group-hover:ring-blue-500 rounded-2xl transition-all duration-300" />
                 </Card>
               </Link>
             ))
@@ -232,7 +263,7 @@ const Browse = () => {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="mt-8 flex justify-center">
+          <div className="mt-12 flex justify-center">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>

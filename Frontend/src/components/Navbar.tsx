@@ -1,8 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import UserDropdown from "./UserDropdown";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    setIsMenuOpen(false);
+  };
 
   return (
     <nav className="border-b border-gray-800 bg-black/95 backdrop-blur-sm shadow-sm">
@@ -32,18 +40,17 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Auth Buttons */}
+          {/* Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/login">
-              <button className="px-4 py-2 text-sm font-medium text-white hover:text-gray-300 transition-colors">
-                Sign In
-              </button>
-            </Link>
-            <Link to="/signup">
-              <button className="px-4 py-2 text-sm font-medium bg-white text-black rounded-md hover:bg-gray-200 transition-colors">
-                Join ReWear
-              </button>
-            </Link>
+            {isAuthenticated ? (
+              <UserDropdown />
+            ) : (
+              <Link to="/login">
+                <button className="px-4 py-2 text-sm font-medium text-white hover:text-gray-300 transition-colors">
+                  Sign In
+                </button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -74,16 +81,27 @@ const Navbar = () => {
                 About
               </Link>
               <div className="flex flex-col space-y-2 pt-4 border-t border-gray-800">
-                <Link to="/login">
-                  <button className="w-full px-4 py-2 text-sm font-medium text-white hover:text-gray-300 transition-colors text-left">
-                    Sign In
-                  </button>
-                </Link>
-                <Link to="/signup">
-                  <button className="w-full px-4 py-2 text-sm font-medium bg-white text-black rounded-md hover:bg-gray-200 transition-colors">
-                    Join ReWear
-                  </button>
-                </Link>
+                {isAuthenticated ? (
+                  <>
+                    <Link to="/profile">
+                      <button className="w-full px-4 py-2 text-sm font-medium text-white hover:text-gray-300 transition-colors text-left">
+                        Profile Settings
+                      </button>
+                    </Link>
+                    <button 
+                      onClick={handleLogout}
+                      className="w-full px-4 py-2 text-sm font-medium text-white hover:text-gray-300 transition-colors text-left"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <Link to="/login">
+                    <button className="w-full px-4 py-2 text-sm font-medium text-white hover:text-gray-300 transition-colors text-left">
+                      Sign In
+                    </button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
