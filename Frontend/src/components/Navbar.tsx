@@ -24,7 +24,7 @@ const Navbar = () => {
             <Link to="/browse" className="text-gray-600 hover:text-gray-900 transition-colors">
               Browse
             </Link>
-            <Link to="/add-item" className="text-gray-600 hover:text-gray-900 transition-colors">
+            <Link to="/list-item" className="text-gray-600 hover:text-gray-900 transition-colors">
               List Item
             </Link>
             <Link to="/about" className="text-gray-600 hover:text-gray-900 transition-colors">
@@ -67,7 +67,7 @@ const Navbar = () => {
               <Link to="/browse" className="text-gray-600 hover:text-gray-900 transition-colors">
                 Browse
               </Link>
-              <Link to="/add-item" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <Link to="/list-item" className="text-gray-600 hover:text-gray-900 transition-colors">
                 List Item
               </Link>
               <Link to="/about" className="text-gray-600 hover:text-gray-900 transition-colors">
